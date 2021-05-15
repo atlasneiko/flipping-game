@@ -28,21 +28,25 @@ const CardContainer = ({ cardNum }) => {
 
   //* handle flippedCardCount
   let cardDisabled = false;
-  const flippedCardCount = currCards.filter(ele => ele.length === 3).length;
-
+  const [pairedCards, setPairedCards] = useState([]);
+  const flippedCardCount = currCards.filter(ele => ele.length === 3 && !pairedCards.includes(ele)).length;
   if (flippedCardCount === 2) {
-    const flippedCards = currCards.filter(card => card.length === 3);
+    const flippedCards = currCards.filter(card => card.length === 3 && !pairedCards.includes(card));
     if (flippedCards[0][0] !== flippedCards[1][0]) {
       cardDisabled = true;
       setTimeout(() => {
-        console.log("clickable again!");
         cardDisabled = false;
         const resetCards = currCards.map(card => {
-          return card.length === 3 ? card.slice(0, 2) : card
+          if (!pairedCards.includes(card) && card.length === 3) {
+            return card.slice(0, 2);
+          } else {
+            return card;
+          }
         })
         setCurrCards(resetCards);
       }, 3000)
-
+    } else {
+      setPairedCards([...flippedCards, pairedCards])
     }
 
 
@@ -50,7 +54,7 @@ const CardContainer = ({ cardNum }) => {
 
   return (
     <div className="card-container">
-      <h1>{cardNum}</h1>
+      {/* <h1>{cardNum}</h1> */}
       { currCards.map((card, idx) => {
         return <Card
           card={card}
